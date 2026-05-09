@@ -1,12 +1,19 @@
 // Стримим SSE-ответ от /api/clarify руками: fetch + ReadableStream + парсинг event/data.
 // Возвращает функцию-cancel, чтобы можно было прервать запрос.
 
+// В dev Vite проксирует /api → localhost. На Netlify переменная VITE_API_BASE_URL
+// задаёт полный URL бэкенда (без слэша в конце), например https://clarify-api.onrender.com
+function clarifyEndpoint() {
+  const base = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+  return base ? `${base}/api/clarify` : '/api/clarify';
+}
+
 export function streamClarify({ text, mode, onChunk, onDone, onError, onWarning }) {
   const controller = new AbortController();
 
   (async () => {
     try {
-      const response = await fetch('/api/clarify', {
+      const response = await fetch(clarifyEndpoint(), {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, mode }),

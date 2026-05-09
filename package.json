@@ -1,0 +1,21 @@
+{
+  "name": "clarify",
+  "version": "1.0.0",
+  "private": true,
+  "description": "AI-сервис, превращающий юридический канцелярит в человеческий язык. React + Express + Gemini.",
+  "scripts": {
+    "install:all": "npm install && npm install --prefix server && npm install --prefix client",
+    "dev": "concurrently -n server,client -c magenta,cyan \"npm run dev --prefix server\" \"npm run dev --prefix client\"",
+    "dev:server": "npm run dev --prefix server",
+    "dev:client": "npm run dev --prefix client",
+    "build": "npm run build --prefix client",
+    "start": "npm run start --prefix server"
+  },
+  "devDependencies": {
+    "concurrently": "^9.1.0"
+  },
+  "engines": {
+    "node": ">=18"
+  },
+  "license": "MIT"
+}

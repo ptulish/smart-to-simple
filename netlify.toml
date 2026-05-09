@@ -1,0 +1,13 @@
+# Netlify: только статический фронт (Vite). Бэкенд Express деплоится отдельно.
+# Добавьте в Netlify → Site settings → Environment variables:
+#   VITE_API_BASE_URL = https://ваш-бэкенд.onrender.com  (без слэша в конце)
+
+[build]
+  base = "client"
+  command = "npm ci && npm run build"
+  publish = "dist"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
