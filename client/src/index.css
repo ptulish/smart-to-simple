@@ -1,0 +1,150 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body,
+  #root {
+    height: 100%;
+  }
+
+  body {
+    @apply bg-[#0b0d12] text-white antialiased;
+    font-feature-settings: 'ss01', 'cv11';
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  ::selection {
+    @apply bg-indigo-500/40 text-white;
+  }
+}
+
+@layer components {
+  /* Стеклянная карточка в стиле macOS Big Sur */
+  .glass {
+    @apply bg-white/[0.04] backdrop-blur-2xl border border-white/10;
+  }
+
+  /* Скроллбар, чтоб не выпадал из эстетики */
+  .clean-scroll::-webkit-scrollbar {
+    width: 8px;
+  }
+  .clean-scroll::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  .clean-scroll::-webkit-scrollbar-thumb {
+    @apply bg-white/10 rounded-full;
+  }
+  .clean-scroll::-webkit-scrollbar-thumb:hover {
+    @apply bg-white/20;
+  }
+
+  /* Markdown стилизация: красивые отступы и типографика. */
+  .prose-clarify {
+    @apply text-white/90 leading-relaxed;
+  }
+  .prose-clarify h1,
+  .prose-clarify h2,
+  .prose-clarify h3 {
+    @apply font-semibold tracking-tight text-white mt-6 mb-3;
+  }
+  .prose-clarify h1 {
+    @apply text-2xl;
+  }
+  .prose-clarify h2 {
+    @apply text-xl;
+  }
+  .prose-clarify h3 {
+    @apply text-lg;
+  }
+  .prose-clarify p {
+    @apply my-3 text-white/80;
+  }
+  .prose-clarify strong {
+    @apply text-white font-semibold;
+  }
+  .prose-clarify em {
+    @apply text-white/90 italic;
+  }
+  .prose-clarify ul,
+  .prose-clarify ol {
+    @apply my-3 pl-5 space-y-1.5;
+  }
+  .prose-clarify ul {
+    @apply list-disc marker:text-indigo-400;
+  }
+  .prose-clarify ol {
+    @apply list-decimal marker:text-indigo-400;
+  }
+  .prose-clarify li {
+    @apply text-white/80;
+  }
+  .prose-clarify code {
+    @apply bg-white/10 px-1.5 py-0.5 rounded-md text-sm font-mono;
+  }
+  .prose-clarify pre {
+    @apply bg-black/40 p-4 rounded-2xl overflow-x-auto my-4 text-sm;
+  }
+  .prose-clarify blockquote {
+    @apply border-l-2 border-indigo-400/60 pl-4 my-4 text-white/70 italic;
+  }
+  .prose-clarify table {
+    @apply w-full my-4 border-collapse text-sm;
+  }
+  .prose-clarify th,
+  .prose-clarify td {
+    @apply border border-white/10 px-3 py-2 text-left;
+  }
+  .prose-clarify th {
+    @apply bg-white/5 font-semibold;
+  }
+  .prose-clarify a {
+    @apply text-indigo-300 underline underline-offset-2 hover:text-indigo-200;
+  }
+  .prose-clarify hr {
+    @apply border-white/10 my-6;
+  }
+
+  /* Анимированный градиент для главной кнопки */
+  .btn-gradient {
+    background: linear-gradient(
+      120deg,
+      #6366f1 0%,
+      #8b5cf6 25%,
+      #ec4899 50%,
+      #8b5cf6 75%,
+      #6366f1 100%
+    );
+    background-size: 200% 200%;
+    animation: btnShine 6s ease infinite;
+  }
+
+  @keyframes btnShine {
+    0%,
+    100% {
+      background-position: 0% 50%;
+    }
+    50% {
+      background-position: 100% 50%;
+    }
+  }
+
+  /* Skeleton shimmer */
+  .skeleton-line {
+    @apply bg-white/[0.06] rounded-lg overflow-hidden relative;
+  }
+  .skeleton-line::after {
+    content: '';
+    @apply absolute inset-0;
+    background: linear-gradient(
+      90deg,
+      transparent 0%,
+      rgba(255, 255, 255, 0.06) 50%,
+      transparent 100%
+    );
+    background-size: 1000px 100%;
+    animation: shimmer 2s infinite linear;
+  }
+}
