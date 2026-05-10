@@ -11,6 +11,15 @@ const API_KEY = process.env.GEMINI_API_KEY;
 app.use(cors());
 app.use(express.json({ limit: '2mb' }));
 
+app.get('/', (_req, res) => {
+  res.json({
+    ok: true,
+    name: 'Clarify API',
+    health: '/api/health',
+    clarify: 'POST /api/clarify',
+  });
+});
+
 const MIN_INPUT_LENGTH = 30;
 const MAX_INPUT_LENGTH = 60_000;
 

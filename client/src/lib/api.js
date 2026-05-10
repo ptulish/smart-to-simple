@@ -2,18 +2,35 @@
 // Возвращает функцию-cancel, чтобы можно было прервать запрос.
 
 // В dev Vite проксирует /api → localhost. На Netlify переменная VITE_API_BASE_URL
-// задаёт полный URL бэкенда (без слэша в конце), например https://clarify-api.onrender.com
-function clarifyEndpoint() {
-  const base = (import.meta.env.VITE_API_BASE_URL || '').replace(/\/$/, '');
+// задаёт полный URL бэкенда (без слэша в конце), например https://….onrender.com
+function resolvedApiBase() {
+  let b = String(import.meta.env.VITE_API_BASE_URL ?? '').trim().replace(/\/+$/, '');
+  if (/\/api$/i.test(b)) b = b.slice(0, -4).replace(/\/+$/, '');
+  return b;
+}
+
+function clarifyUrl() {
+  const base = resolvedApiBase();
   return base ? `${base}/api/clarify` : '/api/clarify';
 }
+
+const NETLIFY_HINT =
+  'В Netlify задайте VITE_API_BASE_URL = URL сервера на Render (без слэша в конце), затем Deploy → Trigger deploy → Clear cache and deploy.';
 
 export function streamClarify({ text, mode, onChunk, onDone, onError, onWarning }) {
   const controller = new AbortController();
 
   (async () => {
     try {
-      const response = await fetch(clarifyEndpoint(), {
+      const apiBase = resolvedApiBase();
+      const url = clarifyUrl();
+
+      if (import.meta.env.PROD && !apiBase) {
+        onError?.(`Не задан адрес API. ${NETLIFY_HINT}`);
+        return;
+      }
+
+      const response = await fetch(url, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ text, mode }),
@@ -22,7 +39,20 @@ export function streamClarify({ text, mode, onChunk, onDone, onError, onWarning 
 
       if (!response.ok) {
         const data = await response.json().catch(() => ({}));
-        onError?.(data.error || `Сервер вернул ${response.status}`);
+        let msg =
+          data.error ||
+          (response.status === 404 ? 'Страница не найдена (404).' : `Сервер вернул ${response.status}`);
+
+        const onNetlify =
+          typeof window !== 'undefined' && /netlify\.app$/i.test(window.location.hostname);
+        if (response.status === 404 && !apiBase && import.meta.env.PROD && onNetlify) {
+          msg = `Запрос ушёл на Netlify вместо Render. ${NETLIFY_HINT}`;
+        }
+        if (response.status === 404 && apiBase) {
+          msg += ` Проверьте Render: ${apiBase}/api/health`;
+        }
+
+        onError?.(msg);
         return;
       }
 
